@@ -1,0 +1,206 @@
+---
+title: "Proyecto Modelos"
+author: "Equipo NETOXA"
+date: '2022-05-28'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(queueing)
+```
+
+# Planteamiento del problema
+Se realizara un modelo de colas basado en un parque de atracciones, en donde se simularán las lineas de espera de las atracciones y se estudiara el caso. En el parque hay tres atracciones muy populares donde es común que se formen largas colas de visitantes.
+La primer atracción es una *montaña rusa* que tiene un sistema de 5 carros con capacidad de 4 personas cada uno, ofrece un recorrido cada 4 minutos, tiene una tasa de llegada con una distribución de Poisson con media de 565 visitantes por hora. La segunda atracción son los *carritos chocones*, cada carro tiene la capacidad para dos personas y hay 12 carros en total, la tasa de llegada de clientes sigue una distribución de Poisson de 612 clientes por hora de media, con un trabajo cada 6 min. Y la tercera atracción es *el martillo* que cuenta con una capacidad de 16 personas, la tasa de llegada (con distribución de Poisson) es de 427 clientes por hora, con un trabajo cada 8 min.
+
+# Resolución 
+
+## Primer atracción (Montaña rusa)
+
+***Sistema: Parque de diversiones, Clientes: Visitantes, Servidores: Montaña rusa***
+
+***Tasa de llegadas ($\lambda$) = 565 visitantes por hora = 565***
+
+***Tasa de servicio ($\mu$) = 1 trabajo cada 4 minutos***
+
+***Número de servidores = 1***
+
+***Modelo: M/M/1/k***
+
+***Tamaño de cola = 100***
+
+```{r}
+lambda <- 565
+mu <- (60/4)*20
+s <- 1
+PMMR <- NewInput.MM1K(lambda = lambda, mu = mu, k = 101)
+CheckInput(PMMR)
+PMMRo <- QueueingModel(PMMR)
+summary(PMMRo)
+```
+
+Primero calcularemos las probabilidades de estado estable: 
+```{r}
+# Probabilidad de que existan n clientes en el sistema
+Pn(PMMRo)
+```
+
+Con esto podemos determinar lo siguiente:
+
+***La probabilidad de que los clientes se vayan ya que la atracción este llena es de 4.690265e-01 o del 46.90265%***
+
+Después se calcula la cantidad de clientes esperada en la atracción de la siguiente manera:
+```{r}
+# Cantidad esperada de clientes
+L(PMMRo)
+```
+
+***La cantidad esperada de clientes en la atracción es de 100.***
+
+Se procede a calcular el número de clientes promedio en la cola:
+
+```{r}
+# Número de clientes promedio en la cola
+Lq(PMMRo)
+```
+
+***La cantidad de clientes promedio en la cola es de 99.***
+
+Después calcularemos el tiempo promedio que duran en el sistema
+
+```{r}
+# Tiempo promedio en el sistema
+W(PMMRo)*60 # minutos
+```
+
+***El tiempo que duran en el sistema es de 19.97358 minutos.***
+
+```{r}
+# Tiempo promedio en la cola
+Wq(PMMRo)*60 # minutos
+```
+
+***El tiempo promedio que duran en la cola es de unos 19.77358 minutos.***
+
+Después de calcular esto, ya tenemos los resultados de una atracción y procedemos a hacer lo mismo con las otras dos atracciones más populares.
+
+## Segunda atracción (Carritos chocones)
+
+***Sistema: Parque de diversiones, Clientes: Visitantes, Servidores: Carritos chocones***
+
+***Tasa de llegadas ($\lambda$) = 612 visitantes por hora***
+
+***Tasa de servicio ($\mu$) = 1 trabajo cada 6 minutos***
+
+***Número de servidores = 1***
+
+***Modelo: M/M/1/k***
+
+***Tamaño de cola = 150***
+
+```{r}
+lambda <- 612
+mu <- (60/6)*24
+s <- 1
+PMCC <- NewInput.MM1K(lambda = lambda, mu = mu, k = 151)
+CheckInput(PMCC)
+PMCCo <- QueueingModel(PMCC)
+summary(PMCCo)
+```
+
+```{r}
+# Probabilidad de que existan n clientes en el sistema
+Pn(PMCCo)
+```
+
+***La probabilidad de que los clientes se vayan ya que la atracción este llena es de 6.078431e-01 o del 60.78431%***
+
+```{r}
+# Cantidad esperada de clientes
+L(PMCCo)
+```
+
+***La cantidad esperada de clientes en la atracción es de 150.***
+
+```{r}
+# Número de clientes promedio en la cola
+Lq(PMCCo)
+```
+
+***La cantidad de clientes promedio en la cola es de 149.***
+
+```{r}
+# Tiempo promedio en el sistema
+W(PMCCo)*60 # minutos
+```
+
+***El tiempo que duran en el sistema es de 37.58871 minutos.***
+
+```{r}
+# Tiempo promedio en la cola
+Wq(PMCCo)*60 # minutos
+```
+
+***El tiempo promedio que duran en la cola es de unos 37.33871 minutos.***
+
+Hacemos lo mismo para la atracción de El Martillo.
+
+## Tercera atracción (Martillo)
+
+***Sistema: Parque de diversiones, Clientes: Visitantes, Servidores: El Martillo***
+
+***Tasa de llegadas ($\lambda$) = 472 visitantes por hora***
+
+***Tasa de servicio ($\mu$) = 1 trabajo cada 8 minutos***
+
+***Número de servidores = 16***
+
+***Tamaño de la cola = 100***
+
+***Modelo: M/M/1/k***
+
+```{r}
+lambda <- 472
+mu <- (60/8)*16
+s <- 1
+PMM <- NewInput.MM1K(lambda = lambda, mu = mu, k = 101)
+CheckInput(PMM)
+PMMo <- QueueingModel(PMM)
+summary(PMMo)
+```
+
+```{r}
+# Probabilidad de que existan n clientes en el sistema
+Pn(PMMo)
+```
+
+***La probabilidad de que los clientes se vayan ya que la atracción este llena es de 7.457627e-01 o del 74.57627%***
+
+```{r}
+# Cantidad esperada de clientes
+L(PMMo)
+```
+
+***La cantidad esperada de clientes en la atracción es de 101.***
+
+```{r}
+# Número de clientes promedio en la cola
+Lq(PMMo)
+```
+
+***La cantidad de clientes promedio en la cola es de 100.***
+
+```{r}
+# Tiempo promedio en el sistema
+W(PMMo)*60 # minutos
+```
+
+***El tiempo que duran en el sistema es de 50.32955 minutos.***
+
+```{r}
+# Tiempo promedio en la cola
+Wq(PMMo)*60 # minutos
+```
+
+***El tiempo promedio que duran en la cola es de unos 49.82955 minutos.***
